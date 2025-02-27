@@ -1,3 +1,22 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Production
+/dist
+/build
+dist-ssr
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+
 # Logs
 logs
 *.log
@@ -22,3 +41,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Vercel
+.vercel
