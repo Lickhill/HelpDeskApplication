@@ -24,7 +24,6 @@ exports.protect = async (req, res, next) => {
 		try {
 			// Verify token
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
-			console.log("Decoded token:", decoded); // Debug log
 
 			// Get user from token
 			const user = await User.findById(decoded.id);
@@ -40,17 +39,14 @@ exports.protect = async (req, res, next) => {
 			req.user = user;
 			req.user.role = decoded.role || user.roles[0]; // Use role from token or first role from user
 
-			console.log("User in middleware:", req.user); // Debug log
 			next();
 		} catch (err) {
-			console.error("Token verification error:", err);
 			return res.status(401).json({
 				success: false,
 				message: "Token is not valid",
 			});
 		}
 	} catch (error) {
-		console.error("Auth middleware error:", error);
 		return res.status(500).json({
 			success: false,
 			message: "Server Error",

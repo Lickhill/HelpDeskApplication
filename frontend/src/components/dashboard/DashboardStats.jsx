@@ -15,8 +15,6 @@ const DashboardStats = () => {
 	const fetchStats = async () => {
 		try {
 			const token = localStorage.getItem("token");
-			console.log("Fetching stats with token:", token); // Debug log
-
 			const response = await axios.get(
 				`${import.meta.env.VITE_API_URL}/dashboard/stats`,
 				{
@@ -30,8 +28,6 @@ const DashboardStats = () => {
 				setStats(response.data.data);
 			}
 		} catch (err) {
-			console.error("Error fetching stats:", err);
-			console.error("Error response:", err.response?.data); // Debug log
 			setError(
 				err.response?.data?.message ||
 					"Failed to load dashboard statistics"

@@ -63,8 +63,6 @@ exports.addNote = async (req, res) => {
 		const { text } = req.body;
 		const { ticketId } = req.params;
 
-		console.log("Adding note:", { text, ticketId, user: req.user });
-
 		if (!text) {
 			return res.status(400).json({
 				success: false,
@@ -73,7 +71,6 @@ exports.addNote = async (req, res) => {
 		}
 
 		const ticket = await Ticket.findById(ticketId);
-		console.log("Found ticket:", ticket);
 
 		if (!ticket) {
 			return res.status(404).json({
@@ -108,8 +105,6 @@ exports.addNote = async (req, res) => {
 			noteType,
 		};
 
-		console.log("Created note object:", note);
-
 		// Ensure all existing notes have a noteType
 		ticket.notes = ticket.notes.map((existingNote) => ({
 			...existingNote.toObject(),
@@ -121,9 +116,7 @@ exports.addNote = async (req, res) => {
 
 		try {
 			await ticket.save();
-			console.log("Ticket saved successfully");
 		} catch (saveError) {
-			console.error("Error saving ticket:", saveError);
 			throw saveError;
 		}
 
@@ -139,15 +132,10 @@ exports.addNote = async (req, res) => {
 			note: populatedNote,
 		});
 	} catch (error) {
-		console.error("Add note error details:", error);
 		res.status(500).json({
 			success: false,
 			message: "Failed to add note",
 			error: error.message,
-			stack:
-				process.env.NODE_ENV === "development"
-					? error.stack
-					: undefined,
 		});
 	}
 };
@@ -193,7 +181,6 @@ exports.deleteTicket = async (req, res) => {
 
 exports.getAllTickets = async (req, res) => {
 	try {
-		console.log("User requesting tickets:", req.user);
 		let tickets;
 
 		// Custom sort function to put Closed/Review tickets at the end
@@ -208,12 +195,9 @@ exports.getAllTickets = async (req, res) => {
 			return new Date(b.updatedAt) - new Date(a.updatedAt);
 		};
 
-		// Admin can see all tickets
 		if (req.user.role === "admin") {
 			tickets = await Ticket.find().populate("customer", "name email");
-		}
-		// Agents can see all non-closed tickets
-		else if (req.user.role === "agent") {
+		} else if (req.user.role === "agent") {
 			tickets = await Ticket.find({ status: { $ne: "Closed" } }).populate(
 				"customer",
 				"name email"
@@ -221,14 +205,11 @@ exports.getAllTickets = async (req, res) => {
 		} else {
 			return res.status(403).json({
 				success: false,
-				message: `Not authorized to view all tickets. Current role: ${req.user.role}`,
+				message: "Not authorized to view all tickets",
 			});
 		}
 
-		// Apply custom sorting
 		tickets = tickets.sort(customSort);
-
-		console.log("Found tickets:", tickets.length);
 
 		res.json({
 			success: true,
@@ -236,7 +217,6 @@ exports.getAllTickets = async (req, res) => {
 			data: tickets,
 		});
 	} catch (error) {
-		console.error("Get all tickets error:", error);
 		res.status(500).json({
 			success: false,
 			message: "Failed to fetch tickets",

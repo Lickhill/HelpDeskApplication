@@ -10,7 +10,6 @@ const AllTickets = () => {
 	const { user } = useAuth();
 
 	useEffect(() => {
-		console.log("Current user role:", user?.role);
 		fetchAllTickets();
 	}, []);
 
@@ -30,8 +29,6 @@ const AllTickets = () => {
 	const fetchAllTickets = async () => {
 		try {
 			const token = localStorage.getItem("token");
-			console.log("Fetching tickets with token:", token);
-
 			const response = await axios.get(
 				`${import.meta.env.VITE_API_URL}/tickets/all`,
 				{
@@ -41,14 +38,10 @@ const AllTickets = () => {
 				}
 			);
 
-			console.log("Tickets response:", response.data);
-
 			if (response.data.success) {
-				// Apply sorting when setting tickets
 				setTickets(sortTickets(response.data.data));
 			}
 		} catch (err) {
-			console.error("Error fetching tickets:", err);
 			setError(err.response?.data?.message || "Failed to load tickets");
 		} finally {
 			setLoading(false);
