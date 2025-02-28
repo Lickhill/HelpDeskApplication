@@ -10,7 +10,6 @@ const generateToken = (user) => {
 
 exports.register = async (req, res) => {
 	try {
-		console.log("Registration request body:", req.body);
 		const { name, email, password } = req.body;
 
 		// Validate required fields

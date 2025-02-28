@@ -15,7 +15,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+		origin:
+			process.env.NODE_ENV === "production"
+				? [process.env.FRONTEND_URL, /\.vercel\.app$/] // Allow all Vercel domains in production
+				: "http://localhost:5173",
 		credentials: true,
 	})
 );
